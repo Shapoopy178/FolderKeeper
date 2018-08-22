@@ -1,0 +1,13 @@
+FolderKeeper Settings File for:
+/home/tyler/Code/Python/FolderKeeper
+#Most recent version = getcwd0.1.0
+
+last_refresh = 2018-08-21 23:29:26.267040
+
+ignore_list = []
+extension_whitelist = []
+recursive = True
+monitor_age = True
+max_age = 14 #days
+auto_purge = False
+delete_empty_folders = True
