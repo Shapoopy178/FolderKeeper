@@ -1,6 +1,6 @@
 """
 FolderKeeper
-version 0.0.1
+version 0.0.2
 
 Run to execute folder maintenance tasks as determined in the
 parameters section of the script.
