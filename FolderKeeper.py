@@ -11,9 +11,6 @@ import sys
 import time
 import datetime
 import send2trash
-
-#%%
-version = '0.1.0'
 #%%
 class FolderKeeper(object):
     '''
@@ -21,23 +18,11 @@ class FolderKeeper(object):
     operations on system directories. Not intended to be used directly,
     but as a master template for the RootDirectory and Subdirectory classes.
     '''
-    def menu(self):
-        '''
-        Opens interactive menu for management of Directory settings.
-        '''        
-        print('Main Menu')
-        
-        print('[1] Check files')
-        print('[2] Clean flagged files')
-
     def __init__(self, path):
         '''
         Initialize Directory settings and attributes
         '''
-        
-        #Version information
-        self.version = version
-        
+                
         #Check if arg path is absolute, else aborts execution
         if os.path.isabs(path):
             self.root_path = path
@@ -45,19 +30,20 @@ class FolderKeeper(object):
             print('ERROR:PATH DOES NOT EXIST!')
             print('Directory assignment aborted!')
             return
-        
-        self.settings_fname = 'fk_settings.txt'
-        
-        #Checks for settings file, if none exists, generates new one
-        if not self.settings_fname in os.listdir(path):
+        self.bin_path = os.path.join(self.root_path, '.FolderKeeper')
+        self.settings_fname = os.path.join(self.bin_path, 'fk_settings.fks')
+        if not os.path.isdir(self.bin_path):
+            os.mkdir(self.bin_path)
+            os.chdir(self.bin_path)
             self._generate_settings_file()
         
+        #Checks for settings file, if none exists, generates new one
+
         #Load in settings
         self._load_settings()
         
-        self._master_except_ = ['fk_settings.txt',
+        self._master_except_ = ['.FolderKeeper',
                                 'FolderKeeper.py',
-                                '__init__.py',
                                 '__pycache__']
         
         #Initial population of directory catalog
@@ -67,6 +53,15 @@ class FolderKeeper(object):
         self.flags = {'Files':[],
                       'Directories':[]}
         self.flag_files()
+        
+    def menu(self):
+        '''
+        Opens interactive menu for management of Directory settings.
+        '''        
+        print('Main Menu')
+        
+        print('[1] Check files')
+        print('[2] Clean flagged files')
         
     def refresh_dir(self):
         
@@ -81,7 +76,7 @@ class FolderKeeper(object):
                 self.catalog['directories'].append(item)
             else:
                 print('Error: Unknown item detected in:')
-                print(self.path)
+                print(self.root_path)
                 
         self.last_refresh = datetime.datetime.now()
         
@@ -95,10 +90,9 @@ class FolderKeeper(object):
         
     def _generate_settings_file(self):
         
-        f = open(self.settings_fname,'x')
+        f = open(self.settings_fname,'w')
         
         f.write('FolderKeeper Settings File for:\n'+self.root_path)
-        f.write('\n#Most recent version = getcwd%s'%(self.version))
         f.write('\n\nlast_refresh = []')
         f.write('\n\nignore_list = []\n')
         f.write('extension_whitelist = []')
@@ -117,9 +111,9 @@ class FolderKeeper(object):
         f = open(self.settings_fname,'r')
         lines = [line.rstrip('\n') for line in f]
         
-        for line in lines[6:]:
+        for line in lines[3:]:
             spltLine = line.split(sep=' = ')
-            self.settings[spltLine[0]] = eval(spltLine[1])
+            self.settings[spltLine[0]] = spltLine[1]
 
         f.close()
         
@@ -169,8 +163,9 @@ class FolderKeeper(object):
         
         for idx, item in enumerate(self.flags):
             if item:
-                send2trash(self.catalog['files'][idx])
-        
+                pass
+                #send2trash.send2trash(self.catalog['files'][idx])
+        elf.settings_fname = os.path.join(self.bin_path, 'fk_settings.fks')
         self.refresh_dir()
         
         return
@@ -203,5 +198,5 @@ Directories = [Root]
 for Dir in reversed(Directories):
     Dir.flag_files()
     Dir.flag_directories()
-    if Dir.settings['auto_purge']:
+    if Dir.settings['auto_purge'] == True:
         Dir.clean_folder()

@@ -1,9 +1,8 @@
 FolderKeeper Settings File for:
 /home/tyler/Code/Python/FolderKeeper
-#Most recent version = getcwd0.1.0
 
-last_refresh = 2018-08-21 23:29:26.267040
-
+last_refresh = []
+last_refresh = 2018-09-10 17:43:42.688404
 ignore_list = []
 extension_whitelist = []
 recursive = True
